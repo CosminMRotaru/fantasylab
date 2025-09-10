@@ -19,11 +19,49 @@ import {
 
 const API = import.meta.env.VITE_API_BASE || "/api";
 
-const isNarrow = typeof window !== "undefined" && window.innerWidth < 480;
-const TEAM_COL_PX = isNarrow ? 110 : 130;
-const ATK_COL_PX = isNarrow ? 140 : 160;
-const DEF_COL_PX = isNarrow ? 140 : 160;
-const AVG_COL_PX = 72;
+function useMatrixSizes() {
+  const calc = () => {
+    const w = typeof window !== "undefined" ? window.innerWidth : 1024;
+    if (w < 400)
+      return {
+        TEAM_COL_PX: 100,
+        ATK_COL_PX: 120,
+        DEF_COL_PX: 120,
+        AVG_COL_PX: 64,
+        cellMin: 72,
+      };
+    if (w < 520)
+      return {
+        TEAM_COL_PX: 110,
+        ATK_COL_PX: 130,
+        DEF_COL_PX: 130,
+        AVG_COL_PX: 68,
+        cellMin: 80,
+      };
+    if (w < 768)
+      return {
+        TEAM_COL_PX: 120,
+        ATK_COL_PX: 150,
+        DEF_COL_PX: 150,
+        AVG_COL_PX: 70,
+        cellMin: 88,
+      };
+    return {
+      TEAM_COL_PX: 130,
+      ATK_COL_PX: 160,
+      DEF_COL_PX: 160,
+      AVG_COL_PX: 72,
+      cellMin: 96,
+    };
+  };
+  const [s, setS] = useState(calc);
+  useEffect(() => {
+    const onR = () => setS(calc());
+    window.addEventListener("resize", onR);
+    return () => window.removeEventListener("resize", onR);
+  }, []);
+  return s;
+}
 
 export default function Fixtures() {
   const init = loadFixturesSettings();
@@ -248,6 +286,8 @@ export default function Fixtures() {
     return makeNineBinColorMapper(all);
   }, [rows]);
 
+  const { TEAM_COL_PX, ATK_COL_PX, DEF_COL_PX, AVG_COL_PX, cellMin } =
+    useMatrixSizes();
   const fixedPx = TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX + AVG_COL_PX;
   const gwColWidth = `calc((100% - ${fixedPx}px) / ${Math.max(
     gwList.length,
@@ -439,7 +479,7 @@ export default function Fixtures() {
                   <th
                     key={gw}
                     className="text-center p-2"
-                    style={{ width: gwColWidth, minWidth: 88 }}
+                    style={{ width: gwColWidth, minWidth: cellMin }}
                   >
                     GW {gw}
                   </th>
@@ -536,7 +576,7 @@ export default function Fixtures() {
                     <td
                       key={c.gw}
                       className="p-1 text-center"
-                      style={{ width: gwColWidth, minWidth: 88 }}
+                      style={{ width: gwColWidth, minWidth: cellMin }}
                     >
                       <div
                         className="rounded-md px-2 py-1 font-semibold"
