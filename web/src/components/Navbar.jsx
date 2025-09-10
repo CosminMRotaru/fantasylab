@@ -238,13 +238,13 @@ function Tab({ to, label }) {
       {({ isActive }) => (
         <span
           className={[
-            "inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]",
+            "tab-pill inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]",
             isActive ? "bg-white/10 text-white" : "",
           ].join(" ")}
         >
           {label}
           {isActive && (
-            <span className="pointer-events-none absolute left-2 right-2 bottom-1.5 h-[3px] rounded bg-[#00D5C4] shadow-[0_0_16px_#00D5C4]" />
+            <span className="tab-underline pointer-events-none absolute left-2 right-2 bottom-1.5 h-[3px] rounded bg-[#00D5C4] shadow-[0_0_16px_#00D5C4]" />
           )}
         </span>
       )}
