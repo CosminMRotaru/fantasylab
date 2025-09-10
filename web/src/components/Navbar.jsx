@@ -220,7 +220,7 @@ export default function Navbar() {
           </a>
         </div>
 
-        <div className="order-3 lg:order-2 flex-1 basis-[280px] lg:basis-[380px] min-w-[220px] w-full flex justify-center">
+        <div className="order-3 lg:order-2 flex-1 basis-[280px] lg:basis-[380px] min-w-[220px] w-full flex justify-center search-under">
           <div className="w-full max-w-[560px]">
             <GlobalSearchWrapper>
               <GlobalSearch />
