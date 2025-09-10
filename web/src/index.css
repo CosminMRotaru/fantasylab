@@ -273,7 +273,6 @@ body::before {
   .deadline-card:hover {
     transform: none !important;
   }
-  /* Navbar compact ONLY mobile */
   header.nav {
     flex-wrap: nowrap;
     gap: 0.35rem;
@@ -298,7 +297,6 @@ body::before {
     font-size: 0.68rem;
     line-height: 1;
   }
-  /* Tabs (reuse Tab component output) */
   header.nav span[role="button"],
   header.nav a span.relative {
     transform: none !important;
@@ -334,7 +332,6 @@ body::before {
   header.nav .github-link {
     display: none !important;
   }
-  /* Bottom bar */
   header.nav::after {
     content: "";
     position: absolute;
@@ -368,7 +365,6 @@ body::before {
   }
 }
 
-/* Make both squad matrices fully scrollable (no sticky overlay) */
 .squad-matrix th.sticky,
 .squad-matrix td.sticky {
   position: static !important;
@@ -378,11 +374,9 @@ body::before {
 }
 .squad-matrix th,
 .squad-matrix td {
-  /* allow narrower gw columns while still readable */
   white-space: nowrap;
 }
 
-/* Info column tighter font + subtle separator gap */
 .squad-matrix .info-col {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -403,17 +397,6 @@ body::before {
 .squad-matrix td.info-col + td,
 .squad-matrix th.info-col + th {
   padding-left: 6px;
-  position: relative;
-}
-.squad-matrix th.info-col + th::before,
-.squad-matrix td.info-col + td::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 15%;
-  bottom: 15%;
-  width: 1px;
-  background: rgba(255, 255, 255, 0.18);
 }
 @media (max-width: 640px) {
   .squad-matrix td.info-col > div {
@@ -432,10 +415,6 @@ body::before {
   .squad-matrix td.info-col + td,
   .squad-matrix th.info-col + th {
     padding-left: 5px;
-  }
-  .squad-matrix th.info-col + th::before,
-  .squad-matrix td.info-col + td::before {
-    background: rgba(255, 255, 255, 0.25);
   }
 }
 
@@ -497,7 +476,6 @@ body::before {
   @apply block md:hidden;
 }
 
-/* Fixtures matrix (non-sticky unified scroll + mobile compact) */
 .fixtures-matrix th,
 .fixtures-matrix td {
   position: static !important;
@@ -535,4 +513,48 @@ body::before {
     font-size: 9px;
     padding: 2px 4px;
   }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.numeric-arrows {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.numeric-arrows button {
+  padding: 0;
+  width: 18px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  transition: opacity 0.15s, transform 0.15s, filter 0.2s;
+}
+.numeric-arrows button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px) scale(1.04);
+}
+.numeric-arrows button:active {
+  opacity: 0.65;
+  transform: translateY(0) scale(0.98);
+}
+.numeric-arrows svg {
+  display: block;
+  pointer-events: none;
 }
