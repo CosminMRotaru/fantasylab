@@ -35,8 +35,7 @@ function Hero() {
           </span>
         </h1>
         <p className="mt-6 text-lg md:text-xl text-base-300 max-w-2xl">
-          Transparent fixture scoring and clean tools to plan transfers, not
-          guess them.
+         Less gut feel. More green arrows.
         </p>
         <div className="mt-8 flex flex-wrap gap-4 justify-center">
           <Link
@@ -168,3 +167,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
