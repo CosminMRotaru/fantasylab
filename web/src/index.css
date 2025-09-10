@@ -189,6 +189,38 @@ body::before {
   .search-item:hover {
     background: rgba(255, 255, 255, 0.1);
   }
+
+  .dropdown-panel {
+    @apply absolute right-0 mt-2 w-72 p-3 rounded-xl shadow-xl z-50;
+    background: linear-gradient(
+      180deg,
+      rgba(55, 0, 60, 0.92) 0%,
+      rgba(55, 0, 60, 0.85) 100%
+    );
+    border: 1px solid var(--fpl-purple-border);
+    backdrop-filter: blur(8px);
+  }
+
+  .deadline-card {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav .flex.flex-wrap {
+    flex-wrap: nowrap;
+  }
+  .nav .truncate {
+    max-width: 120px;
+  }
+  .nav .nav-tabs {
+    gap: 0.25rem;
+  }
+
+  .squad-table th,
+  .squad-table td {
+    font-size: 11px;
+  }
 }
 
 .title-gradient {
