@@ -73,10 +73,8 @@ export default function Fixtures() {
   const [count, setCount] = useState(init.count);
   const [onlyFuture, setOnlyFuture] = useState(init.onlyFuture);
   const [sortBy, setSortBy] = useState(init.sortBy);
-  // Restored missing state declarations removed during prior refactors
   const [sortDir, setSortDir] = useState(init.sortDir);
   const [teams, setTeams] = useState([]);
-  // Weights (currently not used in computation after simplification, but preserved for settings compatibility)
   const [homeW, setHomeW] = useState(init.homeW ?? 1);
   const [awayW, setAwayW] = useState(init.awayW ?? 1);
   const [oppW, setOppW] = useState(init.oppW ?? 1);
@@ -300,12 +298,10 @@ export default function Fixtures() {
 
   const { TEAM_COL_PX, ATK_COL_PX, DEF_COL_PX, AVG_COL_PX, cellMin, STAR_PX } =
     useMatrixSizes();
-  // Uniform gaps between ATK-DEF, DEF-AVG and AVG-Fixtures
   const GAP_PX = 6;
-  // Visual spacing between fixture colored boxes
   const FIX_GAP = 10;
   const fixedPx =
-    TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX + AVG_COL_PX + 3 * GAP_PX; // three gap columns
+    TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX + AVG_COL_PX + 3 * GAP_PX; 
   const gwColWidth = `calc((100% - ${fixedPx}px) / ${Math.max(
     gwList.length,
     1
@@ -388,25 +384,103 @@ export default function Fixtures() {
         <div className="grid md:grid-cols-3 gap-3 text-sm">
           <label className="flex items-center gap-2">
             <span className="w-24 text-base-300">From GW</span>
-            <input
-              type="number"
-              min={1}
-              max={38}
-              value={fromGw}
-              onChange={(e) => setFromGw(+e.target.value || 1)}
-              className="field w-28"
-            />
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                min={1}
+                max={38}
+                value={fromGw}
+                onChange={(e) => setFromGw(+e.target.value || 1)}
+                className="field w-28"
+              />
+              <div className="numeric-arrows">
+                <button
+                  type="button"
+                  aria-label="Increase from gameweek"
+                  onClick={() =>
+                    setFromGw((v) => Math.min(38, (Number(v) || 1) + 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Decrease from gameweek"
+                  onClick={() =>
+                    setFromGw((v) => Math.max(1, (Number(v) || 1) - 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ transform: "rotate(180deg)" }}
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </label>
           <label className="flex items-center gap-2">
             <span className="w-24 text-base-300"># GWs</span>
-            <input
-              type="number"
-              min={1}
-              max={20}
-              value={count}
-              onChange={(e) => setCount(+e.target.value || 1)}
-              className="field w-28"
-            />
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={count}
+                onChange={(e) => setCount(+e.target.value || 1)}
+                className="field w-28"
+              />
+              <div className="numeric-arrows">
+                <button
+                  type="button"
+                  aria-label="Increase number of gameweeks"
+                  onClick={() =>
+                    setCount((v) => Math.min(20, (Number(v) || 1) + 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Decrease number of gameweeks"
+                  onClick={() =>
+                    setCount((v) => Math.max(1, (Number(v) || 1) - 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ transform: "rotate(180deg)" }}
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </label>
           <label className="flex items-center gap-2">
             <input
