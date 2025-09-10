@@ -24,34 +24,38 @@ function useMatrixSizes() {
     const w = typeof window !== "undefined" ? window.innerWidth : 1024;
     if (w < 400)
       return {
-        TEAM_COL_PX: 100,
-        ATK_COL_PX: 120,
-        DEF_COL_PX: 120,
-        AVG_COL_PX: 64,
-        cellMin: 72,
+        TEAM_COL_PX: 60,
+        ATK_COL_PX: 60,
+        DEF_COL_PX: 60,
+        AVG_COL_PX: 40,
+        cellMin: 50,
+        STAR_PX: 9,
       };
     if (w < 520)
       return {
-        TEAM_COL_PX: 110,
-        ATK_COL_PX: 130,
-        DEF_COL_PX: 130,
-        AVG_COL_PX: 68,
-        cellMin: 80,
+        TEAM_COL_PX: 80,
+        ATK_COL_PX: 60,
+        DEF_COL_PX: 60,
+        AVG_COL_PX: 40,
+        cellMin: 56,
+        STAR_PX: 9.5,
       };
     if (w < 768)
       return {
-        TEAM_COL_PX: 120,
-        ATK_COL_PX: 150,
-        DEF_COL_PX: 150,
-        AVG_COL_PX: 70,
-        cellMin: 88,
+        TEAM_COL_PX: 90,
+        ATK_COL_PX: 60,
+        DEF_COL_PX: 60,
+        AVG_COL_PX: 40,
+        cellMin: 64,
+        STAR_PX: 10,
       };
     return {
-      TEAM_COL_PX: 130,
-      ATK_COL_PX: 160,
-      DEF_COL_PX: 160,
-      AVG_COL_PX: 72,
-      cellMin: 96,
+      TEAM_COL_PX: 100,
+      ATK_COL_PX: 60,
+      DEF_COL_PX: 60,
+      AVG_COL_PX: 40,
+      cellMin: 72,
+      STAR_PX: 10.5,
     };
   };
   const [s, setS] = useState(calc);
@@ -69,7 +73,13 @@ export default function Fixtures() {
   const [count, setCount] = useState(init.count);
   const [onlyFuture, setOnlyFuture] = useState(init.onlyFuture);
   const [sortBy, setSortBy] = useState(init.sortBy);
+  // Restored missing state declarations removed during prior refactors
   const [sortDir, setSortDir] = useState(init.sortDir);
+  const [teams, setTeams] = useState([]);
+  // Weights (currently not used in computation after simplification, but preserved for settings compatibility)
+  const [homeW, setHomeW] = useState(init.homeW ?? 1);
+  const [awayW, setAwayW] = useState(init.awayW ?? 1);
+  const [oppW, setOppW] = useState(init.oppW ?? 1);
 
   useEffect(() => {
     saveFixturesSettings({
@@ -78,10 +88,12 @@ export default function Fixtures() {
       onlyFuture,
       sortBy,
       sortDir,
+      homeW,
+      awayW,
+      oppW,
     });
-  }, [fromGw, count, onlyFuture, sortBy, sortDir]);
+  }, [fromGw, count, onlyFuture, sortBy, sortDir, homeW, awayW, oppW]);
 
-  const [teams, setTeams] = useState([]);
   const [deadlines, setDeadlines] = useState([]);
   const [fixturesByGw, setFixturesByGw] = useState({});
 
@@ -286,16 +298,21 @@ export default function Fixtures() {
     return makeNineBinColorMapper(all);
   }, [rows]);
 
-  const { TEAM_COL_PX, ATK_COL_PX, DEF_COL_PX, AVG_COL_PX, cellMin } =
+  const { TEAM_COL_PX, ATK_COL_PX, DEF_COL_PX, AVG_COL_PX, cellMin, STAR_PX } =
     useMatrixSizes();
-  const fixedPx = TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX + AVG_COL_PX;
+  // Uniform gaps between ATK-DEF, DEF-AVG and AVG-Fixtures
+  const GAP_PX = 6;
+  // Visual spacing between fixture colored boxes
+  const FIX_GAP = 10;
+  const fixedPx =
+    TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX + AVG_COL_PX + 3 * GAP_PX; // three gap columns
   const gwColWidth = `calc((100% - ${fixedPx}px) / ${Math.max(
     gwList.length,
     1
   )})`;
 
   const Dir = ({ active }) => (
-    <span className="inline-block w-3 text-xs align-middle">
+    <span className="inline-block w-3 text-xs">
       {active ? (sortDir === "asc" ? "▲" : "▼") : ""}
     </span>
   );
@@ -356,7 +373,7 @@ export default function Fixtures() {
           window.dispatchEvent(new Event("ratings:updated"));
         }}
       >
-        Save as…
+        Save
       </button>
     </div>
   );
@@ -412,19 +429,18 @@ export default function Fixtures() {
       >
         <div className="overflow-x-auto">
           <table
-            className="text-sm"
+            className="text-sm fixtures-matrix"
             style={{
               width: "100%",
               tableLayout: "fixed",
-              minWidth: `${Math.max(640, fixedPx + gwList.length * 96)}px`,
+              minWidth: `${Math.max(560, fixedPx + gwList.length * cellMin)}px`,
             }}
           >
             <thead>
               <tr style={{ background: "#2f0033" }}>
                 <th
-                  className="sticky z-30 text-left"
+                  className="text-left"
                   style={{
-                    left: 0,
                     width: TEAM_COL_PX,
                     minWidth: TEAM_COL_PX,
                     maxWidth: TEAM_COL_PX,
@@ -432,38 +448,59 @@ export default function Fixtures() {
                   }}
                   onClick={onSortAlpha}
                 >
-                  <div className="p-2 cursor-pointer select-none">
-                    Team <Dir active={sortBy === "alpha"} />
+                  <div className="p-1.5 cursor-pointer select-none text-xs font-medium flex items-center gap-1 leading-none">
+                    <span>Team</span> <Dir active={sortBy === "alpha"} />
                   </div>
                 </th>
                 <th
-                  className="sticky z-30 text-left sticky-sep"
+                  className="text-left"
                   style={{
-                    left: TEAM_COL_PX,
                     width: ATK_COL_PX,
                     minWidth: ATK_COL_PX,
                     maxWidth: ATK_COL_PX,
                     background: "#2f0033",
                   }}
                 >
-                  <div className="p-2">ATK</div>
+                  <div className="p-1.5 text-xs font-medium flex items-center gap-1 leading-none">
+                    ATK
+                  </div>
                 </th>
                 <th
-                  className="sticky z-30 text-left sticky-sep"
+                  aria-hidden
                   style={{
-                    left: TEAM_COL_PX + ATK_COL_PX,
+                    width: GAP_PX,
+                    minWidth: GAP_PX,
+                    maxWidth: GAP_PX,
+                    padding: 0,
+                    background: "#2f0033",
+                  }}
+                />
+                <th
+                  className="text-left"
+                  style={{
                     width: DEF_COL_PX,
                     minWidth: DEF_COL_PX,
                     maxWidth: DEF_COL_PX,
                     background: "#2f0033",
                   }}
                 >
-                  <div className="p-2">DEF</div>
+                  <div className="p-1.5 text-xs font-medium flex items-center gap-1 leading-none">
+                    DEF
+                  </div>
                 </th>
                 <th
-                  className="sticky z-30 text-left sticky-sep"
+                  aria-hidden
                   style={{
-                    left: TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX,
+                    width: GAP_PX,
+                    minWidth: GAP_PX,
+                    maxWidth: GAP_PX,
+                    padding: 0,
+                    background: "#2f0033",
+                  }}
+                />
+                <th
+                  className="text-left"
+                  style={{
                     width: AVG_COL_PX,
                     minWidth: AVG_COL_PX,
                     maxWidth: AVG_COL_PX,
@@ -471,10 +508,20 @@ export default function Fixtures() {
                   }}
                   onClick={onSortFdr}
                 >
-                  <div className="p-2 cursor-pointer select-none">
-                    Avg <Dir active={sortBy === "fdr"} />
+                  <div className="p-1.5 cursor-pointer select-none text-xs font-medium flex items-center gap-1 leading-none">
+                    <span>Avg</span> <Dir active={sortBy === "fdr"} />
                   </div>
                 </th>
+                <th
+                  aria-hidden
+                  style={{
+                    width: GAP_PX,
+                    minWidth: GAP_PX,
+                    maxWidth: GAP_PX,
+                    padding: 0,
+                    background: "#2f0033",
+                  }}
+                />
                 {gwList.map((gw) => (
                   <th
                     key={gw}
@@ -493,33 +540,37 @@ export default function Fixtures() {
                   style={{ background: idx % 2 ? "#320038" : "#2d0030" }}
                 >
                   <td
-                    className="sticky z-20 font-medium whitespace-nowrap"
+                    className="font-medium whitespace-nowrap"
                     style={{
-                      left: 0,
                       width: TEAM_COL_PX,
                       minWidth: TEAM_COL_PX,
                       maxWidth: TEAM_COL_PX,
                       background: "inherit",
                     }}
                   >
-                    <div className="p-2">{row.name}</div>
+                    <div
+                      className="p-1 text-[10px] font-medium truncate"
+                      title={row.name}
+                    >
+                      {row.name}
+                    </div>
                   </td>
                   <td
-                    className="sticky z-20 sticky-sep"
+                    className=""
                     style={{
-                      left: TEAM_COL_PX,
                       width: ATK_COL_PX,
                       minWidth: ATK_COL_PX,
                       maxWidth: ATK_COL_PX,
                       background: "inherit",
                     }}
                   >
-                    <div className="p-1">
+                    <div className="py-1 pl-1 pr-0 text-[10px]">
                       <StarEditor
                         value={
                           (ratingsMap[row.teamId]?.attack ?? 1.5) * (5 / 3)
                         }
                         readOnly={false}
+                        size={STAR_PX}
                         onChange={(stars) => {
                           setRatingsMap((prev) => ({
                             ...prev,
@@ -533,21 +584,31 @@ export default function Fixtures() {
                     </div>
                   </td>
                   <td
-                    className="sticky z-20 sticky-sep"
+                    aria-hidden
                     style={{
-                      left: TEAM_COL_PX + ATK_COL_PX,
+                      width: GAP_PX,
+                      minWidth: GAP_PX,
+                      maxWidth: GAP_PX,
+                      padding: 0,
+                      background: "inherit",
+                    }}
+                  />
+                  <td
+                    className=""
+                    style={{
                       width: DEF_COL_PX,
                       minWidth: DEF_COL_PX,
                       maxWidth: DEF_COL_PX,
                       background: "inherit",
                     }}
                   >
-                    <div className="p-1">
+                    <div className="py-1 pl-1 pr-0 text-[10px]">
                       <StarEditor
                         value={
                           (ratingsMap[row.teamId]?.defense ?? 1.5) * (5 / 3)
                         }
                         readOnly={false}
+                        size={STAR_PX}
                         onChange={(stars) => {
                           setRatingsMap((prev) => ({
                             ...prev,
@@ -561,25 +622,46 @@ export default function Fixtures() {
                     </div>
                   </td>
                   <td
-                    className="sticky z-20 sticky-sep"
+                    aria-hidden
                     style={{
-                      left: TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX,
+                      width: GAP_PX,
+                      minWidth: GAP_PX,
+                      maxWidth: GAP_PX,
+                      padding: 0,
+                      background: "inherit",
+                    }}
+                  />
+                  <td
+                    className=""
+                    style={{
                       width: AVG_COL_PX,
                       minWidth: AVG_COL_PX,
                       maxWidth: AVG_COL_PX,
                       background: "inherit",
                     }}
                   >
-                    <div className="p-2">{row.avg.toFixed(2)}</div>
+                    <div className="py-1 pl-1 pr-0 text-[10px] font-medium">
+                      {row.avg.toFixed(2)}
+                    </div>
                   </td>
-                  {row.cells.map((c) => (
+                  <td
+                    aria-hidden
+                    style={{
+                      width: GAP_PX,
+                      minWidth: GAP_PX,
+                      maxWidth: GAP_PX,
+                      padding: 0,
+                      background: "inherit",
+                    }}
+                  />
+                  {row.cells.map((c, cIdx) => (
                     <td
                       key={c.gw}
-                      className="p-1 text-center"
+                      className="py-1 px-0 text-center"
                       style={{ width: gwColWidth, minWidth: cellMin }}
                     >
                       <div
-                        className="rounded-md px-2 py-1 font-semibold"
+                        className="rounded-md px-1.5 py-1 font-semibold text-[10px]"
                         title={`GW${c.gw} • ${c.text} • score ${c.score}`}
                         style={{
                           background: (() => {
@@ -611,6 +693,8 @@ export default function Fixtures() {
                             return shadeIndexToColor(shade);
                           })(),
                           color: "rgba(10,10,10,0.9)",
+                          marginRight:
+                            cIdx === row.cells.length - 1 ? 0 : FIX_GAP,
                         }}
                       >
                         {c.text}
@@ -631,17 +715,17 @@ export default function Fixtures() {
   );
 }
 
-function StarIcon({ fill = 0 }) {
+function StarIcon({ fill = 0, size = 14 }) {
   return (
     <span
       className="relative inline-block align-middle"
-      style={{ width: 14, height: 14 }}
+      style={{ width: size, height: size }}
     >
       <svg
         viewBox="0 0 24 24"
         className="absolute inset-0"
         aria-hidden
-        style={{ width: 14, height: 14 }}
+        style={{ width: size, height: size }}
       >
         <path
           d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
@@ -654,7 +738,11 @@ function StarIcon({ fill = 0 }) {
         className="absolute inset-0 overflow-hidden"
         style={{ width: fill === 1 ? "100%" : fill === 0.5 ? "50%" : "0%" }}
       >
-        <svg viewBox="0 0 24 24" aria-hidden style={{ width: 14, height: 14 }}>
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden
+          style={{ width: size, height: size }}
+        >
           <path
             d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
             fill="#ffd166"
@@ -665,7 +753,7 @@ function StarIcon({ fill = 0 }) {
   );
 }
 
-function StarEditor({ value = 0, readOnly = false, onChange }) {
+function StarEditor({ value = 0, readOnly = false, onChange, size = 14 }) {
   const raw = Number(value) || 0;
   const quant = Math.round(raw * 2) / 2;
   const clamped = Math.max(0, Math.min(5, quant));
@@ -728,14 +816,12 @@ function StarEditor({ value = 0, readOnly = false, onChange }) {
       title={`${clamped.toFixed(1)}★`}
     >
       <div
-        className={`flex items-center gap-1 ${
-          readOnly ? "" : "cursor-pointer"
-        }`}
+        className={`flex items-center ${readOnly ? "" : "cursor-pointer"}`}
         onClick={handleToggle}
       >
         {stars.map((f, i) => (
           <span key={i} className="relative inline-flex">
-            <StarIcon fill={f} />
+            <StarIcon fill={f} size={size} />
           </span>
         ))}
       </div>
