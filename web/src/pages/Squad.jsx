@@ -43,21 +43,20 @@ function saveTransfers(squadId, arr) {
 }
 
 const useResponsiveColumns = () => {
-  const [dims, setDims] = useState(() => {
-    const w = window.innerWidth;
-    return {
-      PLAYER_COL_PX: w < 480 ? 160 : 220,
-      INFO_COL_PX: w < 480 ? 80 : 96,
-    };
-  });
+  // Targets: show at least 2 GW cells without scroll on very small screens (~360-430px)
+  // Shrink player + info columns aggressively under 450px.
+  const calc = (w) => {
+    if (w <= 450) {
+      return { PLAYER_COL_PX: 130, INFO_COL_PX: 48 };
+    }
+    if (w <= 640) {
+      return { PLAYER_COL_PX: 160, INFO_COL_PX: 60 };
+    }
+    return { PLAYER_COL_PX: 220, INFO_COL_PX: 84 };
+  };
+  const [dims, setDims] = useState(() => calc(window.innerWidth));
   useEffect(() => {
-    const onR = () => {
-      const w = window.innerWidth;
-      setDims({
-        PLAYER_COL_PX: w < 480 ? 160 : 220,
-        INFO_COL_PX: w < 480 ? 80 : 96,
-      });
-    };
+    const onR = () => setDims(calc(window.innerWidth));
     window.addEventListener("resize", onR);
     return () => window.removeEventListener("resize", onR);
   }, []);
@@ -514,7 +513,6 @@ export default function Squad() {
       >
         Reset
       </button>
-      {syncMsg && <span className="text-xs text-base-300">{syncMsg}</span>}
     </div>
   );
 
@@ -629,26 +627,33 @@ export default function Squad() {
             <span className="opacity-70">▾</span>
           </button>
           {showSquadMenu && (
-            <div className="search-dd absolute mt-2 w-64 z-50">
+            <div
+              className="search-dd absolute mt-2 z-50 w-auto"
+              style={{
+                minWidth: "calc(100% + 8px)",
+                maxWidth: "calc(100% + 24px)",
+              }}
+            >
               {squads.length === 0 && (
                 <div className="text-sm text-base-400 px-2 py-1">No squads</div>
               )}
               {squads.map((s) => (
                 <div
                   key={s.id}
-                  className="search-item"
+                  className="search-item px-2 py-1 text-[11px] gap-1"
+                  style={{ lineHeight: 1.1 }}
                   onClick={() => {
                     selectSquad(s.id);
                     setShowSquadMenu(false);
                   }}
                 >
-                  <span className="truncate pr-2">{s.name}</span>
-                  <div className="flex items-center gap-2">
+                  <span className="truncate pr-1 max-w-[110px]">{s.name}</span>
+                  <div className="flex items-center gap-1">
                     {s.id === activeSquadId && (
-                      <span className="text-xs text-brand-400">active</span>
+                      <span className="text-[10px] text-brand-400">active</span>
                     )}
                     <button
-                      className="btn px-2 py-1 text-xs"
+                      className="btn px-1 py-0.5 text-[10px]"
                       title="Delete squad"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -684,7 +689,13 @@ export default function Squad() {
             <span className="opacity-70">▾</span>
           </button>
           {showSnapMenu && (
-            <div className="search-dd absolute mt-2 w-80 z-50">
+            <div
+              className="search-dd absolute mt-2 z-50 w-auto"
+              style={{
+                minWidth: "calc(100% + 8px)",
+                maxWidth: "calc(100% + 24px)",
+              }}
+            >
               {snapshots.length === 0 && (
                 <div className="text-sm text-base-400 px-2 py-1">
                   No snapshots
@@ -823,13 +834,13 @@ export default function Squad() {
 
         <div className="overflow-x-auto">
           <table
-            className="text-sm"
+            className="text-sm squad-matrix"
             style={{
               width: "100%",
               tableLayout: "fixed",
               minWidth: `${Math.max(
-                640,
-                PLAYER_COL_PX + INFO_COL_PX + gwList.length * 72
+                560,
+                PLAYER_COL_PX + INFO_COL_PX + gwList.length * 60
               )}px`,
             }}
           >
@@ -847,7 +858,7 @@ export default function Squad() {
                   <div className="p-2">Player</div>
                 </th>
                 <th
-                  className="sticky z-30 bg-white/5 text-left sticky-sep"
+                  className="sticky z-30 bg-white/5 text-left sticky-sep info-col"
                   style={{
                     left: PLAYER_COL_PX,
                     width: INFO_COL_PX,
@@ -865,7 +876,7 @@ export default function Squad() {
                       width: `calc((100% - ${
                         PLAYER_COL_PX + INFO_COL_PX
                       }px) / ${Math.max(gwList.length, 1)})`,
-                      minWidth: 72,
+                      minWidth: 60,
                     }}
                   >
                     GW {gw}
@@ -966,7 +977,7 @@ export default function Squad() {
                             </div>
                           </td>
                           <td
-                            className="sticky z-20 sticky-sep"
+                            className="sticky z-20 sticky-sep info-col"
                             style={{
                               left: PLAYER_COL_PX,
                               width: INFO_COL_PX,
@@ -998,7 +1009,7 @@ export default function Squad() {
                               <td
                                 key={c.gw}
                                 className="p-1 text-center"
-                                style={{ width: gwColWidth, minWidth: 88 }}
+                                style={{ width: gwColWidth, minWidth: 64 }}
                               >
                                 <div
                                   className={`rounded-md px-2 py-1 font-semibold relative transition cursor-pointer
@@ -1022,7 +1033,7 @@ export default function Squad() {
                                   {c.text}
                                   {hasTransferAtGw && (
                                     <span
-                                      className="absolute left-1 top-1 w-4 h-4 rounded-full bg-[#7c5cff] text-white text-[10px] leading-4 flex items-center justify-center pointer-events-none"
+                                      className="absolute left-1 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#7c5cff] text-white text-[8px] leading-3 flex items-center justify-center pointer-events-none shadow-sm"
                                       title={`Transfer GW ${gw}`}
                                       aria-hidden="true"
                                     >
@@ -1034,10 +1045,11 @@ export default function Squad() {
                                     aria-hidden="true"
                                   >
                                     <span
-                                      className="inline-block rounded-full border-2 transition-all"
+                                      className="inline-block rounded-full border transition-all"
                                       style={{
-                                        width: 12,
-                                        height: 12,
+                                        width: 8,
+                                        height: 8,
+                                        borderWidth: 2,
                                         borderColor: "#7c5cff",
                                         backgroundColor: isSelected
                                           ? "#7c5cff"
@@ -1288,13 +1300,13 @@ export default function Squad() {
 
             <div className="overflow-x-auto w-full">
               <table
-                className="text-sm"
+                className="text-sm squad-matrix"
                 style={{
                   width: "100%",
                   tableLayout: "fixed",
                   minWidth: `${Math.max(
-                    640,
-                    PLAYER_COL_PX + INFO_COL_PX + gwList.length * 72
+                    560,
+                    PLAYER_COL_PX + INFO_COL_PX + gwList.length * 60
                   )}px`,
                 }}
               >
@@ -1304,17 +1316,17 @@ export default function Squad() {
                       className="sticky z-30 bg-white/5 text-left sticky-sep"
                       style={{
                         left: 0,
-                        width: PLAYER_COL_PX,
-                        minWidth: PLAYER_COL_PX,
-                        maxWidth: PLAYER_COL_PX,
+                        width: PLAYER_COL_PX + 24,
+                        minWidth: PLAYER_COL_PX + 24,
+                        maxWidth: PLAYER_COL_PX + 24,
                       }}
                     >
                       <div className="p-2">Player</div>
                     </th>
                     <th
-                      className="sticky z-30 bg-white/5 text-left sticky-sep"
+                      className="sticky z-30 bg-white/5 text-left sticky-sep info-col"
                       style={{
-                        left: PLAYER_COL_PX,
+                        left: PLAYER_COL_PX + 24,
                         width: INFO_COL_PX,
                         minWidth: INFO_COL_PX,
                         maxWidth: INFO_COL_PX,
@@ -1330,7 +1342,7 @@ export default function Squad() {
                           width: `calc((100% - ${
                             PLAYER_COL_PX + INFO_COL_PX
                           }px) / ${Math.max(gwList.length, 1)})`,
-                          minWidth: 72,
+                          minWidth: 60,
                         }}
                       >
                         GW {gw}
@@ -1395,9 +1407,9 @@ export default function Squad() {
                                 className="sticky z-20 font-medium whitespace-nowrap sticky-sep"
                                 style={{
                                   left: 0,
-                                  width: PLAYER_COL_PX,
-                                  minWidth: PLAYER_COL_PX,
-                                  maxWidth: PLAYER_COL_PX,
+                                  width: PLAYER_COL_PX + 24,
+                                  minWidth: PLAYER_COL_PX + 24,
+                                  maxWidth: PLAYER_COL_PX + 24,
                                   background:
                                     idx % 2 === 0
                                       ? "rgba(20,22,34,0.03)"
@@ -1406,7 +1418,7 @@ export default function Squad() {
                               >
                                 <div className="p-2 flex items-center gap-2">
                                   <span
-                                    className="truncate max-w-[180px]"
+                                    className="truncate max-w-[210px]"
                                     title={playerNames}
                                   >
                                     {playerNames}
@@ -1485,9 +1497,9 @@ export default function Squad() {
                                 </div>
                               </td>
                               <td
-                                className="sticky z-20 sticky-sep"
+                                className="sticky z-20 sticky-sep info-col"
                                 style={{
-                                  left: PLAYER_COL_PX,
+                                  left: PLAYER_COL_PX + 24,
                                   width: INFO_COL_PX,
                                   minWidth: INFO_COL_PX,
                                   maxWidth: INFO_COL_PX,
@@ -1515,7 +1527,7 @@ export default function Squad() {
                                   <td
                                     key={c.gw}
                                     className="p-1 text-center"
-                                    style={{ width: gwColWidth, minWidth: 88 }}
+                                    style={{ width: gwColWidth, minWidth: 64 }}
                                   >
                                     <div
                                       className={`rounded-md px-2 py-1 font-semibold relative transition cursor-pointer
@@ -1542,10 +1554,11 @@ export default function Squad() {
                                         aria-hidden="true"
                                       >
                                         <span
-                                          className="inline-block rounded-full border-2 transition-all"
+                                          className="inline-block rounded-full border transition-all"
                                           style={{
-                                            width: 12,
-                                            height: 12,
+                                            width: 8,
+                                            height: 8,
+                                            borderWidth: 2,
                                             borderColor: "#7c5cff",
                                             backgroundColor: isSelected
                                               ? "#7c5cff"
