@@ -496,3 +496,43 @@ body::before {
 .only-mobile {
   @apply block md:hidden;
 }
+
+/* Fixtures matrix (non-sticky unified scroll + mobile compact) */
+.fixtures-matrix th,
+.fixtures-matrix td {
+  position: static !important;
+  left: auto !important;
+}
+.fixtures-matrix th div.p-2,
+.fixtures-matrix td div.p-2,
+.fixtures-matrix td div.p-1 {
+  font-size: 12px;
+}
+.fixtures-matrix td .rounded-md {
+  font-size: 12px;
+  padding: 4px 6px;
+}
+@media (max-width: 640px) {
+  .fixtures-matrix th div.p-2,
+  .fixtures-matrix td div.p-2,
+  .fixtures-matrix td div.p-1 {
+    font-size: 11px;
+    padding: 4px 6px;
+  }
+  .fixtures-matrix td .rounded-md {
+    font-size: 10px;
+    padding: 3px 5px;
+  }
+}
+@media (max-width: 430px) {
+  .fixtures-matrix th div.p-2,
+  .fixtures-matrix td div.p-2,
+  .fixtures-matrix td div.p-1 {
+    font-size: 10px;
+    padding: 3px 5px;
+  }
+  .fixtures-matrix td .rounded-md {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+}
