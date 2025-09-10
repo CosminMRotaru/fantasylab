@@ -146,6 +146,12 @@ body::before {
     color: var(--text);
   }
 
+  .navbar-flex {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .nav-tabs {
     @apply flex items-center gap-1;
   }
@@ -221,6 +227,21 @@ body::before {
   .squad-table td {
     font-size: 11px;
   }
+}
+@media (max-width: 520px) {
+  .fixtures-matrix td div.rounded-md {
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+  .fixtures-matrix th div.p-2 {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+}
+
+.sticky-sep {
+  box-shadow: 1px 0 0 0 rgba(255, 255, 255, 0.07),
+    -1px 0 0 0 rgba(0, 0, 0, 0.25);
 }
 
 .title-gradient {
