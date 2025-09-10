@@ -43,8 +43,6 @@ function saveTransfers(squadId, arr) {
 }
 
 const useResponsiveColumns = () => {
-  // Targets: show at least 2 GW cells without scroll on very small screens (~360-430px)
-  // Shrink player + info columns aggressively under 450px.
   const calc = (w) => {
     if (w <= 450) {
       return { PLAYER_COL_PX: 130, INFO_COL_PX: 48 };
@@ -313,7 +311,6 @@ export default function Squad() {
     saveActiveSquadId(id);
   }
 
-  // fallback: dacă nu există niciun squad și userul încearcă să adauge
   function ensureActiveSquad() {
     if (!activeSquadId || !squads.length) {
       const id = Date.now().toString();
@@ -340,7 +337,6 @@ export default function Squad() {
           : s
       )
     );
-    // persist
     const updated = loadSquads().map((s) =>
       s.id === id
         ? s.players.find((pl) => pl.fplId === p.fplId) || s.players.length >= 15
@@ -801,25 +797,103 @@ export default function Squad() {
         <div className="grid sm:grid-cols-3 gap-2 text-sm mb-3">
           <label className="flex items-center gap-2">
             <span className="w-24 text-base-300">From GW</span>
-            <input
-              type="number"
-              min={1}
-              max={38}
-              value={fromGw}
-              onChange={(e) => setFromGw(+e.target.value || 1)}
-              className="field w-24"
-            />
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                min={1}
+                max={38}
+                value={fromGw}
+                onChange={(e) => setFromGw(+e.target.value || 1)}
+                className="field w-24"
+              />
+              <div className="numeric-arrows">
+                <button
+                  type="button"
+                  aria-label="Increase from gameweek"
+                  onClick={() =>
+                    setFromGw((v) => Math.min(38, (Number(v) || 1) + 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Decrease from gameweek"
+                  onClick={() =>
+                    setFromGw((v) => Math.max(1, (Number(v) || 1) - 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ transform: "rotate(180deg)" }}
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </label>
           <label className="flex items-center gap-2">
             <span className="w-24 text-base-300"># GWs</span>
-            <input
-              type="number"
-              min={1}
-              max={15}
-              value={count}
-              onChange={(e) => setCount(+e.target.value || 1)}
-              className="field w-24"
-            />
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                min={1}
+                max={15}
+                value={count}
+                onChange={(e) => setCount(+e.target.value || 1)}
+                className="field w-24"
+              />
+              <div className="numeric-arrows">
+                <button
+                  type="button"
+                  aria-label="Increase number of gameweeks"
+                  onClick={() =>
+                    setCount((v) => Math.min(15, (Number(v) || 1) + 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Decrease number of gameweeks"
+                  onClick={() =>
+                    setCount((v) => Math.max(1, (Number(v) || 1) - 1))
+                  }
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ transform: "rotate(180deg)" }}
+                  >
+                    <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -1033,7 +1107,8 @@ export default function Squad() {
                                   {c.text}
                                   {hasTransferAtGw && (
                                     <span
-                                      className="absolute left-1 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#7c5cff] text-white text-[8px] leading-3 flex items-center justify-center pointer-events-none shadow-sm"
+                                      className="absolute left-1 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#7c5cff] text-white text-[8px] leading-none flex items-center justify-center pointer-events-none shadow-sm"
+                                      style={{ lineHeight: 1 }}
                                       title={`Transfer GW ${gw}`}
                                       aria-hidden="true"
                                     >
@@ -1267,25 +1342,103 @@ export default function Squad() {
             <div className="grid sm:grid-cols-3 gap-2 text-sm mb-3">
               <label className="flex items-center gap-2">
                 <span className="w-24 text-base-300">From GW</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={38}
-                  value={fromGw}
-                  onChange={(e) => setFromGw(+e.target.value || 1)}
-                  className="field w-24"
-                />
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    min={1}
+                    max={38}
+                    value={fromGw}
+                    onChange={(e) => setFromGw(+e.target.value || 1)}
+                    className="field w-24"
+                  />
+                  <div className="numeric-arrows">
+                    <button
+                      type="button"
+                      aria-label="Increase from gameweek"
+                      onClick={() =>
+                        setFromGw((v) => Math.min(38, (Number(v) || 1) + 1))
+                      }
+                    >
+                      <svg
+                        width="10"
+                        height="6"
+                        viewBox="0 0 10 6"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Decrease from gameweek"
+                      onClick={() =>
+                        setFromGw((v) => Math.max(1, (Number(v) || 1) - 1))
+                      }
+                    >
+                      <svg
+                        width="10"
+                        height="6"
+                        viewBox="0 0 10 6"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ transform: "rotate(180deg)" }}
+                      >
+                        <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </label>
               <label className="flex items-center gap-2">
                 <span className="w-24 text-base-300"># GWs</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={15}
-                  value={count}
-                  onChange={(e) => setCount(+e.target.value || 1)}
-                  className="field w-24"
-                />
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    min={1}
+                    max={15}
+                    value={count}
+                    onChange={(e) => setCount(+e.target.value || 1)}
+                    className="field w-24"
+                  />
+                  <div className="numeric-arrows">
+                    <button
+                      type="button"
+                      aria-label="Increase number of gameweeks"
+                      onClick={() =>
+                        setCount((v) => Math.min(15, (Number(v) || 1) + 1))
+                      }
+                    >
+                      <svg
+                        width="10"
+                        height="6"
+                        viewBox="0 0 10 6"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Decrease number of gameweeks"
+                      onClick={() =>
+                        setCount((v) => Math.max(1, (Number(v) || 1) - 1))
+                      }
+                    >
+                      <svg
+                        width="10"
+                        height="6"
+                        viewBox="0 0 10 6"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ transform: "rotate(180deg)" }}
+                      >
+                        <path d="M5 0L10 6H0L5 0Z" fill="currentColor" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </label>
               <label className="flex items-center gap-2">
                 <input
