@@ -75,21 +75,21 @@ export default function Navbar() {
   return (
     <header className="nav">
       <div className="w-full px-3 md:px-4 min-h-[56px] py-1.5 flex flex-wrap items-center gap-2 sm:gap-2.5 md:gap-3">
-        <div className="order-1 flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
+        <div className="order-1 flex items-center gap-3 shrink-0">
           <NavLink
             to="/"
-            className="flex items-center font-display text-base sm:text-lg md:text-xl group transition"
+            className="flex items-center font-display text-base sm:text-lg md:text-xl group transition duration-150 hover:scale-[1.05]"
           >
             <img
               src="/favicon.ico"
               alt="FantasyLab"
-              className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-lg transition"
+              className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-lg transition duration-150 group-hover:brightness-150"
             />
-            <span className="ml-2 transition font-semibold bg-gradient-to-r from-[#7c5cff] via-[#00D5C4] to-[#eaeaea] bg-clip-text text-transparent">
+            <span className="transition font-semibold bg-gradient-to-r from-[#7c5cff] via-[#00D5C4] to-[#eaeaea] bg-clip-text text-transparent pr-2 sm:pr-3 group-hover:brightness-110 group-hover:drop-shadow-[0_0_10px_#00d5c4aa]">
               FantasyLab
             </span>
           </NavLink>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-3">
             <Tab to="/fixtures" label="Fixtures" />
             <Tab to="/squad" label="Squad" />
           </div>
@@ -97,15 +97,15 @@ export default function Navbar() {
 
         <div className="order-2 lg:order-3 ml-auto flex items-center gap-3">
           {logged ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <span
-                className="max-w-[180px] sm:max-w-[240px] md:max-w-[300px] truncate select-none text-base sm:text-lg md:text-xl font-extrabold tracking-wide bg-gradient-to-r from-[#00E7D7] via-[#00D5C4] to-[#00b3a8] bg-clip-text text-transparent drop-shadow-[0_0_18px_#00D5C4bb] transition-transform duration-150 hover:scale-[1.06]"
+                className="max-w-[180px] sm:max-w-[240px] md:max-w-[300px] truncate select-none text-base sm:text-lg md:text-xl font-extrabold tracking-wide bg-gradient-to-r from-[#00E7D7] via-[#00D5C4] to-[#00b3a8] bg-clip-text text-transparent drop-shadow-[0_0_18px_#00D5C4bb] transition-transform duration-150 hover:scale-[1.06] pr-2 sm:pr-3"
                 title={user?.email || user?.username || "Account"}
               >
                 {user?.username || user?.email || "Signed in"}
               </span>
               <button
-                className="inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]"
+                className="tab-pill nav-auth-btn inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]"
                 onClick={() => {
                   logout();
                   window.location.reload();
@@ -119,7 +119,7 @@ export default function Navbar() {
               {/* Login + Register dropdowns */}
               <div className="relative" ref={loginWrapRef}>
                 <button
-                  className="inline-block px-3 py-2 text-sm rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c]"
+                  className="tab-pill nav-auth-btn inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]"
                   onClick={() => {
                     setShowLogin((s) => !s);
                     setShowReg(false);
@@ -157,7 +157,7 @@ export default function Navbar() {
               </div>
               <div className="relative" ref={regWrapRef}>
                 <button
-                  className="inline-block px-3 py-2 text-sm rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c]"
+                  className="tab-pill nav-auth-btn inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]"
                   onClick={() => {
                     setShowReg((s) => !s);
                     setShowLogin(false);
