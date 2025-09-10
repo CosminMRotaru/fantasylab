@@ -28,9 +28,6 @@ import {
 
 const API = import.meta.env.VITE_API_BASE || "/api";
 
-const PLAYER_COL_PX = 220;
-const INFO_COL_PX = 96;
-
 function loadLineups(squadId) {
   return JSON.parse(localStorage.getItem(`lineups_${squadId}`) || "{}");
 }
@@ -45,6 +42,28 @@ function saveTransfers(squadId, arr) {
   localStorage.setItem(`transfers_${squadId}`, JSON.stringify(arr));
 }
 
+const useResponsiveColumns = () => {
+  const [dims, setDims] = useState(() => {
+    const w = window.innerWidth;
+    return {
+      PLAYER_COL_PX: w < 480 ? 160 : 220,
+      INFO_COL_PX: w < 480 ? 80 : 96,
+    };
+  });
+  useEffect(() => {
+    const onR = () => {
+      const w = window.innerWidth;
+      setDims({
+        PLAYER_COL_PX: w < 480 ? 160 : 220,
+        INFO_COL_PX: w < 480 ? 80 : 96,
+      });
+    };
+    window.addEventListener("resize", onR);
+    return () => window.removeEventListener("resize", onR);
+  }, []);
+  return dims;
+};
+
 export default function Squad() {
   const location = useLocation();
   const IS_AUTH = isLoggedIn();
@@ -56,6 +75,8 @@ export default function Squad() {
     squads[0] || {
       players: [],
     };
+
+  const { PLAYER_COL_PX, INFO_COL_PX } = useResponsiveColumns();
 
   const [teams, setTeams] = useState([]);
   const [deadlines, setDeadlines] = useState([]);
@@ -292,15 +313,43 @@ export default function Squad() {
     setActiveSquadId(id);
     saveActiveSquadId(id);
   }
+
+  // fallback: dacă nu există niciun squad și userul încearcă să adauge
+  function ensureActiveSquad() {
+    if (!activeSquadId || !squads.length) {
+      const id = Date.now().toString();
+      const base = { id, name: "My Team", players: [] };
+      const next = [base];
+      setSquads(next);
+      saveSquads(next);
+      setActiveSquadId(id);
+      saveActiveSquadId(id);
+      return id;
+    }
+    return activeSquadId;
+  }
+
   function addToSquad(p) {
-    if (activeSquad.players.find((x) => x.fplId === p.fplId)) return;
-    const nextSquads = squads.map((s) =>
-      s.id === activeSquadId
-        ? { ...s, players: [...s.players, p].slice(0, 15) }
+    const id = ensureActiveSquad();
+    setSquads((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? s.players.find((pl) => pl.fplId === p.fplId) ||
+            s.players.length >= 15
+            ? s
+            : { ...s, players: [...s.players, p] }
+          : s
+      )
+    );
+    // persist
+    const updated = loadSquads().map((s) =>
+      s.id === id
+        ? s.players.find((pl) => pl.fplId === p.fplId) || s.players.length >= 15
+          ? s
+          : { ...s, players: [...s.players, p] }
         : s
     );
-    setSquads(nextSquads);
-    saveSquads(nextSquads);
+    saveSquads(updated);
   }
   function removeFromSquad(id) {
     const nextSquads = squads.map((s) =>
