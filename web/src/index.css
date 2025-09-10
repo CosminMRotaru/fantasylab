@@ -32,13 +32,7 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: #020024;
-  background: linear-gradient(
-    90deg,
-    rgba(2, 0, 36, 1) 0%,
-    rgba(9, 9, 121, 1) 35%,
-    rgba(0, 212, 255, 1) 100%
-  );
+  background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%);
   background-blend-mode: normal;
 }
 
@@ -55,7 +49,10 @@ body::before {
       0 10px 30px rgba(0, 0, 0, 0.25);
   }
   .card-header {
-    @apply flex items-center justify-between px-4 py-3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--fpl-purple-border);
   }
   .card-title {
@@ -72,8 +69,21 @@ body::before {
   }
 
   .btn {
-    @apply inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm md:text-base font-medium transition;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    transition: all 0.15s;
     background: rgba(255, 255, 255, 0.14);
+  }
+  @media (min-width: 768px) {
+    .btn {
+      font-size: 1rem;
+    }
   }
   .btn:hover {
     background: rgba(255, 255, 255, 0.18);
@@ -131,7 +141,7 @@ body::before {
   }
 
   .nav {
-    @apply sticky top-0 z-40;
+    @apply sticky top-0 z-40 font-display text-sm md:text-base;
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     background: linear-gradient(
@@ -142,7 +152,10 @@ body::before {
       rgba(7, 9, 13, 0.36);
     border-bottom: 1px solid rgba(124, 92, 255, 0.08);
     box-shadow: none;
-    @apply flex flex-wrap items-center gap-2 font-display text-sm md:text-base;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--text);
   }
 
@@ -153,20 +166,17 @@ body::before {
   }
 
   .nav-tabs {
-    @apply flex items-center gap-1;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
   }
+
   .tab {
     @apply sticky top-0 z-40;
+    position: relative;
     backdrop-filter: blur(6px);
-    background: linear-gradient(
-        180deg,
-        rgba(55, 0, 60, 0.55) 0%,
-        rgba(47, 0, 51, 0.35) 100%
-      ),
-      rgba(10, 14, 22, 0.85);
-    border-bottom: 1px solid rgba(124, 92, 255, 0.14);
-    box-shadow: none;
     background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(124, 92, 255, 0.14);
   }
   .tab-active {
     color: #fff;
@@ -190,7 +200,12 @@ body::before {
     @apply rounded-xl p-2 shadow-xl;
   }
   .search-item {
-    @apply px-3 py-2 rounded-lg cursor-pointer flex items-center justify-between;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .search-item:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -222,7 +237,6 @@ body::before {
   .nav .nav-tabs {
     gap: 0.25rem;
   }
-
   .squad-table th,
   .squad-table td {
     font-size: 11px;
