@@ -95,113 +95,112 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="order-2 lg:order-3 ml-auto flex flex-wrap items-center gap-2 sm:gap-2.5 justify-end shrink-0">
-          {
-            !logged && (
-              <div className="flex items-center gap-2 relative">
-                <div className="relative" ref={loginWrapRef}>
-                  <button
-                    className="inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05]"
-                    onClick={() => {
-                      setShowLogin((s) => !s);
-                      setShowReg(false);
-                    }}
-                  >
-                    Login
-                  </button>
-                  {showLogin && (
-                    <div className="dropdown-panel">
-                      <div className="mb-2 font-semibold">Sign in</div>
-                      <div className="flex flex-col gap-2">
-                        <input
-                          className="field h-9 text-sm"
-                          placeholder="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <input
-                          className="field h-9 text-sm"
-                          placeholder="password"
-                          type="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button
-                          className="btn h-8"
-                          onClick={() => onLogin("login")}
-                        >
-                          Login
-                        </button>
-                        <span className="text-xs text-base-300">{authMsg}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="relative" ref={regWrapRef}>
-                  <button
-                    className="inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05]"
-                    onClick={() => {
-                      setShowReg((s) => !s);
-                      setShowLogin(false);
-                    }}
-                  >
-                    Register
-                  </button>
-                  {showReg && (
-                    <div className="dropdown-panel">
-                      <div className="mb-2 font-semibold">Create account</div>
-                      <div className="flex flex-col gap-2">
-                        <input
-                          className="field h-9 text-sm"
-                          placeholder="username"
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                        />
-                        <input
-                          className="field h-9 text-sm"
-                          placeholder="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <input
-                          className="field h-9 text-sm"
-                          placeholder="password"
-                          type="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button
-                          className="btn h-8"
-                          onClick={() => onLogin("register")}
-                        >
-                          Register
-                        </button>
-                        <span className="text-xs text-base-300">{authMsg}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
-                <span
-                  className="max-w-[180px] sm:max-w-[240px] md:max-w-[300px] truncate select-none text-base sm:text-lg md:text-xl font-extrabold tracking-wide bg-gradient-to-r from-[#00E7D7] via-[#00D5C4] to-[#00b3a8] bg-clip-text text-transparent drop-shadow-[0_0_18px_#00D5C4bb] transition-transform duration-150 hover:scale-[1.06]"
-                  title={user?.email || user?.username || "Account"}
-                >
-                  {user?.username || user?.email || "Signed in"}
-                </span>
+        <div className="order-2 lg:order-3 ml-auto flex items-center gap-3">
+          {logged ? (
+            <div className="flex items-center gap-2">
+              <span
+                className="max-w-[180px] sm:max-w-[240px] md:max-w-[300px] truncate select-none text-base sm:text-lg md:text-xl font-extrabold tracking-wide bg-gradient-to-r from-[#00E7D7] via-[#00D5C4] to-[#00b3a8] bg-clip-text text-transparent drop-shadow-[0_0_18px_#00D5C4bb] transition-transform duration-150 hover:scale-[1.06]"
+                title={user?.email || user?.username || "Account"}
+              >
+                {user?.username || user?.email || "Signed in"}
+              </span>
+              <button
+                className="inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]"
+                onClick={() => {
+                  logout();
+                  window.location.reload();
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              {/* Login + Register dropdowns */}
+              <div className="relative" ref={loginWrapRef}>
                 <button
-                  className="inline-block no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55]"
+                  className="inline-block px-3 py-2 text-sm rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c]"
                   onClick={() => {
-                    logout();
-                    window.location.reload();
+                    setShowLogin((s) => !s);
+                    setShowReg(false);
                   }}
                 >
-                  Logout
+                  Login
                 </button>
+                {showLogin && (
+                  <div className="dropdown-panel">
+                    <div className="mb-2 font-semibold">Sign in</div>
+                    <div className="flex flex-col gap-2">
+                      <input
+                        className="field h-9 text-sm"
+                        placeholder="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                      <input
+                        className="field h-9 text-sm"
+                        placeholder="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <button
+                        className="btn h-8"
+                        onClick={() => onLogin("login")}
+                      >
+                        Login
+                      </button>
+                      <span className="text-xs text-base-300">{authMsg}</span>
+                    </div>
+                  </div>
+                )}
               </div>
-            )
-          }
+              <div className="relative" ref={regWrapRef}>
+                <button
+                  className="inline-block px-3 py-2 text-sm rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c]"
+                  onClick={() => {
+                    setShowReg((s) => !s);
+                    setShowLogin(false);
+                  }}
+                >
+                  Register
+                </button>
+                {showReg && (
+                  <div className="dropdown-panel">
+                    <div className="mb-2 font-semibold">Create account</div>
+                    <div className="flex flex-col gap-2">
+                      <input
+                        className="field h-9 text-sm"
+                        placeholder="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                      />
+                      <input
+                        className="field h-9 text-sm"
+                        placeholder="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                      <input
+                        className="field h-9 text-sm"
+                        placeholder="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <button
+                        className="btn h-8"
+                        onClick={() => onLogin("register")}
+                      >
+                        Register
+                      </button>
+                      <span className="text-xs text-base-300">{authMsg}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           <a
             href="https://github.com/your-org/fantasylab"
             target="_blank"
