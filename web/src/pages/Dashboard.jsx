@@ -88,12 +88,12 @@ function DeadlinesSection({ deadlines, loading }) {
         {deadlines.slice(0, 8).map((gw) => (
           <div
             key={gw.id}
-            className="deadline-card flex items-center justify-between rounded-xl bg-white/5 backdrop-blur px-6 py-4 shadow-lg border border-brand-600/20 transition-all duration-150 hover:scale-[1.03] hover:bg-brand-600/10"
+            className="deadline-card flex items-center justify-between rounded-xl bg-white/5 backdrop-blur px-4 py-3 md:px-6 md:py-4 shadow-lg border border-brand-600/20 transition-all duration-150 md:hover:scale-[1.03] hover:bg-brand-600/10"
             style={{ cursor: "default" }}
           >
-            <div>
+            <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1 min-w-0">
               <span
-                className="font-bold text-lg bg-gradient-to-r from-brand-600 via-[#00D5C4] to-white bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(124,92,255,0.22)]"
+                className="font-bold text-base sm:text-lg md:text-xl bg-gradient-to-r from-brand-600 via-[#00D5C4] to-white bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(124,92,255,0.22)] whitespace-nowrap"
                 style={{
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -101,28 +101,38 @@ function DeadlinesSection({ deadlines, loading }) {
               >
                 GW{gw.id}
               </span>
-              <span className="ml-3 text-base" style={{ color: "#eaeaea" }}>
+              <span
+                className="text-sm sm:text-base truncate max-w-[140px] sm:max-w-[200px]"
+                style={{ color: "#eaeaea" }}
+                title={gw.name}
+              >
                 {gw.name}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <svg width="20" height="20" fill="none">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-2">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="text-white/80"
+              >
                 <circle
-                  cx="10"
-                  cy="10"
+                  cx="12"
+                  cy="12"
                   r="9"
                   stroke="#eaeaea"
                   strokeWidth="2"
                 />
                 <path
-                  d="M10 5v5l3 3"
+                  d="M12 7v5l3 3"
                   stroke="#eaeaea"
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
               </svg>
               <span
-                className="text-base font-mono"
+                className="font-mono text-xs sm:text-sm md:text-base leading-tight tracking-tight"
                 style={{ color: "#eaeaea" }}
               >
                 {new Date(gw.deadlineTime).toLocaleString("en-GB", {
