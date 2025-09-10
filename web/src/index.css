@@ -194,6 +194,13 @@ body::before {
     box-shadow: 0 0 10px #00d5c4;
   }
 
+  .tab-pill {
+    position: relative;
+  }
+  .tab-pill .tab-underline {
+    transition: all 0.18s;
+  }
+
   .search-dd {
     background: rgba(10, 14, 22, 0.96);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -356,6 +363,9 @@ body::before {
   }
   header.nav .search-under input {
     font-size: 0.75rem;
+  }
+  .tab-pill .tab-underline {
+    display: none !important;
   }
 }
 
