@@ -201,6 +201,18 @@ body::before {
     transition: all 0.18s;
   }
 
+  .nav-auth-btn {
+    font-size: 0.95rem;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: 0.25px;
+  }
+  @media (min-width: 768px) {
+    .nav-auth-btn {
+      font-size: 1.18rem;
+    }
+  }
+
   .search-dd {
     background: rgba(10, 14, 22, 0.96);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -307,7 +319,7 @@ body::before {
   header.nav button,
   header.nav .btn {
     padding: 4px 6px;
-    font-size: 0.65rem;
+    font-size: 0.8rem;
     line-height: 1;
   }
   header.nav .btn {
@@ -326,7 +338,7 @@ body::before {
   header.nav .user-span,
   header.nav span[title="Account"],
   header.nav span[title*="@"] {
-    font-size: 0.65rem !important;
+    font-size: 0.85rem !important;
     max-width: 90px;
   }
   header.nav .github-link {
