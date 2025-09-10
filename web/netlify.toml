@@ -2,6 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 # Inject security headers. Adjust VITE_API_BASE / API domain in connect-src if using cross-origin.
 [[headers]]
   for = "/*"
@@ -13,3 +17,4 @@
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
   # Updated connect-src with actual Railway API host
   Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://enthusiastic-quietude-production-b41f.up.railway.app; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+
