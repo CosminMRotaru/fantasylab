@@ -88,7 +88,7 @@ function DeadlinesSection({ deadlines, loading }) {
         {deadlines.slice(0, 8).map((gw) => (
           <div
             key={gw.id}
-            className="flex items-center justify-between rounded-xl bg-white/5 backdrop-blur px-6 py-4 shadow-lg border border-brand-600/20 transition-all duration-150 hover:scale-[1.03] hover:bg-brand-600/10"
+            className="deadline-card flex items-center justify-between rounded-xl bg-white/5 backdrop-blur px-6 py-4 shadow-lg border border-brand-600/20 transition-all duration-150 hover:scale-[1.03] hover:bg-brand-600/10"
             style={{ cursor: "default" }}
           >
             <div>
