@@ -19,9 +19,10 @@ import {
 
 const API = import.meta.env.VITE_API_BASE || "/api";
 
-const TEAM_COL_PX = 130;
-const ATK_COL_PX = 160;
-const DEF_COL_PX = 160;
+const isNarrow = typeof window !== "undefined" && window.innerWidth < 480;
+const TEAM_COL_PX = isNarrow ? 110 : 130;
+const ATK_COL_PX = isNarrow ? 140 : 160;
+const DEF_COL_PX = isNarrow ? 140 : 160;
 const AVG_COL_PX = 72;
 
 export default function Fixtures() {
