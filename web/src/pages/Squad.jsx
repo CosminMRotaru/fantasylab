@@ -15,7 +15,7 @@ import {
   loadSquadFixSettings,
   saveSquadFixSettings,
 } from "../lib/storage.js";
-import { isLoggedIn, saveState, loadState } from "../lib/auth.js";
+import { isLoggedIn, saveState, loadState, getUser } from "../lib/auth.js";
 import {
   computeDifficultyFromRatings,
   heuristicShadeIndex,
@@ -24,6 +24,11 @@ import {
 import {
   loadRatingsPresets,
   loadActiveRatingsPresetId,
+  loadUserSquads,
+  saveUserSquads,
+  loadUserActiveSquadId,
+  saveUserActiveSquadId,
+  migrateGlobalSquadsToUser,
 } from "../lib/storage.js";
 
 const API = import.meta.env.VITE_API_BASE || "/api";
@@ -64,10 +69,18 @@ const useResponsiveColumns = () => {
 export default function Squad() {
   const location = useLocation();
   const IS_AUTH = isLoggedIn();
-  const [squads, setSquads] = useState(IS_AUTH ? [] : loadSquads());
-  const [activeSquadId, setActiveSquadId] = useState(
-    IS_AUTH ? null : loadActiveSquadId() || (squads[0]?.id ?? null)
-  );
+  const user = getUser();
+  useEffect(() => {
+    if (IS_AUTH && user?.id) migrateGlobalSquadsToUser(user.id);
+  }, [IS_AUTH, user?.id]);
+  const [squads, setSquads] = useState(() => {
+    if (!IS_AUTH) return loadSquads();
+    return loadUserSquads(user?.id) || [];
+  });
+  const [activeSquadId, setActiveSquadId] = useState(() => {
+    if (!IS_AUTH) return loadActiveSquadId() || (squads[0]?.id ?? null);
+    return loadUserActiveSquadId(user?.id) || (squads[0]?.id ?? null);
+  });
   const activeSquad = squads.find((s) => s.id === activeSquadId) ||
     squads[0] || {
       players: [],
@@ -317,24 +330,28 @@ export default function Squad() {
     const newSquad = { id, name, players: [] };
     const next = [...squads, newSquad];
     setSquads(next);
-    saveSquads(next);
+    if (IS_AUTH && user?.id) saveUserSquads(user.id, next);
+    else saveSquads(next);
     setActiveSquadId(id);
-    saveActiveSquadId(id);
+    if (IS_AUTH && user?.id) saveUserActiveSquadId(user.id, id);
+    else saveActiveSquadId(id);
   }
   function selectSquad(id) {
     setActiveSquadId(id);
-    saveActiveSquadId(id);
+    if (IS_AUTH && user?.id) saveUserActiveSquadId(user.id, id);
+    else saveActiveSquadId(id);
   }
-
   function ensureActiveSquad() {
     if (!activeSquadId || !squads.length) {
       const id = Date.now().toString();
       const base = { id, name: "My Team", players: [] };
       const next = [base];
       setSquads(next);
-      saveSquads(next);
+      if (IS_AUTH && user?.id) saveUserSquads(user.id, next);
+      else saveSquads(next);
       setActiveSquadId(id);
-      saveActiveSquadId(id);
+      if (IS_AUTH && user?.id) saveUserActiveSquadId(user.id, id);
+      else saveActiveSquadId(id);
       return id;
     }
     return activeSquadId;
@@ -352,14 +369,17 @@ export default function Squad() {
           : s
       )
     );
-    const updated = loadSquads().map((s) =>
+    const updated = (
+      IS_AUTH && user?.id ? loadUserSquads(user.id) : loadSquads()
+    ).map((s) =>
       s.id === id
         ? s.players.find((pl) => pl.fplId === p.fplId) || s.players.length >= 15
           ? s
           : { ...s, players: [...s.players, p] }
         : s
     );
-    saveSquads(updated);
+    if (IS_AUTH && user?.id) saveUserSquads(user.id, updated);
+    else saveSquads(updated);
   }
   function removeFromSquad(id) {
     const nextSquads = squads.map((s) =>
@@ -368,7 +388,16 @@ export default function Squad() {
         : s
     );
     setSquads(nextSquads);
-    saveSquads(nextSquads);
+    if (IS_AUTH && user?.id) saveUserSquads(user.id, nextSquads);
+    else saveSquads(nextSquads);
+  }
+  function onClear() {
+    const nextSquads = squads.map((s) =>
+      s.id === activeSquadId ? { ...s, players: [] } : s
+    );
+    setSquads(nextSquads);
+    if (IS_AUTH && user?.id) saveUserSquads(user.id, nextSquads);
+    else saveSquads(nextSquads);
   }
 
   async function onImportEntry() {
@@ -394,7 +423,8 @@ export default function Squad() {
         s.id === activeSquadId ? { ...s, players: next } : s
       );
       setSquads(nextSquads);
-      saveSquads(nextSquads);
+      if (IS_AUTH && user?.id) saveUserSquads(user.id, nextSquads);
+      else saveSquads(nextSquads);
       setImportMsg(`Imported GW${data.gw} picks for entry ${data.entryId}.`);
     } catch {
       setImportMsg("Import failed.");
@@ -532,7 +562,8 @@ export default function Squad() {
       s.id === activeSquadId ? { ...s, players: [] } : s
     );
     setSquads(nextSquads);
-    saveSquads(nextSquads);
+    if (IS_AUTH && user?.id) saveUserSquads(user.id, nextSquads);
+    else saveSquads(nextSquads);
   }
 
   function toggleLineup(gw, fplId) {
