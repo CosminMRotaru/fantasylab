@@ -99,7 +99,7 @@ export default function Navbar() {
           {logged ? (
             <div className="flex items-center gap-3">
               <span
-                className="max-w-[180px] sm:max-w-[240px] md:max-w-[300px] truncate select-none text-base sm:text-lg md:text-xl font-extrabold tracking-wide bg-gradient-to-r from-[#00E7D7] via-[#00D5C4] to-[#00b3a8] bg-clip-text text-transparent drop-shadow-[0_0_18px_#00D5C4bb] transition-transform duration-150 hover:scale-[1.06] pr-2 sm:pr-3"
+                className="w-[50px] sm:w-[100px] md:w-[150px] truncate select-none text-base sm:text-lg md:text-xl font-extrabold tracking-wide bg-gradient-to-r from-[#00E7D7] via-[#00D5C4] to-[#00b3a8] bg-clip-text text-transparent drop-shadow-[0_0_18px_#00D5C4bb] transition-transform duration-150 hover:scale-[1.06] pr-2 sm:pr-3"
                 title={user?.email || user?.username || "Account"}
               >
                 {user?.username || user?.email || "Signed in"}
