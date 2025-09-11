@@ -101,7 +101,41 @@ export default function Fixtures() {
       .then(setTeams);
     fetch(`${API}/fixtures/deadlines`)
       .then((r) => r.json())
-      .then(setDeadlines);
+      .then((dl) => {
+        setDeadlines(dl);
+        // Determine upcoming GW by current time; deadlines collection contains unfinished GWs
+        if (Array.isArray(dl) && dl.length) {
+          // Each gw object expected to have id and (optionally) deadline/kickoff time; pick the first unfinished as upcoming
+          let upcoming = dl[0]?.id || 1;
+          // If deadlines have a deadlineTime field use the first whose deadline is in the future
+          const now = Date.now();
+          const byTime = dl.find((g) => {
+            const t = new Date(
+              g.deadlineTime || g.deadline || g.kickoffTime || Date.now()
+            ).getTime();
+            return t > now - 30000; // small tolerance
+          });
+          if (byTime && byTime.id) upcoming = byTime.id;
+
+          const SETTINGS_KEY = "fantasylab_fixtures_settings_v1";
+          const raw = localStorage.getItem(SETTINGS_KEY);
+          if (!raw) {
+            setFromGw(upcoming);
+            setCount((c) => (c !== 6 ? 6 : c));
+          } else {
+            try {
+              const parsed = JSON.parse(raw);
+              if (
+                parsed &&
+                typeof parsed.fromGw === "number" &&
+                parsed.fromGw < upcoming
+              ) {
+                setFromGw(upcoming);
+              }
+            } catch {}
+          }
+        }
+      });
   }, []);
 
   const gwList = useMemo(() => {
@@ -301,7 +335,7 @@ export default function Fixtures() {
   const GAP_PX = 6;
   const FIX_GAP = 10;
   const fixedPx =
-    TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX + AVG_COL_PX + 3 * GAP_PX; 
+    TEAM_COL_PX + ATK_COL_PX + DEF_COL_PX + AVG_COL_PX + 3 * GAP_PX;
   const gwColWidth = `calc((100% - ${fixedPx}px) / ${Math.max(
     gwList.length,
     1
