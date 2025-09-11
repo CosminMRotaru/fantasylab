@@ -189,6 +189,21 @@ export default function Squad() {
   const [showSnapMenu, setShowSnapMenu] = useState(false);
   const squadMenuRef = useRef(null);
   const snapMenuRef = useRef(null);
+  // Refs + sizing for keeping search panel same height as matrix without expanding it
+  const matrixRef = useRef(null);
+  const [matrixHeight, setMatrixHeight] = useState(null);
+  useEffect(() => {
+    if (!matrixRef.current || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver((entries) => {
+      for (const e of entries) {
+        if (e.contentRect?.height) {
+          setMatrixHeight(e.contentRect.height);
+        }
+      }
+    });
+    ro.observe(matrixRef.current);
+    return () => ro.disconnect();
+  }, []);
   useEffect(() => {
     function onDocClick(e) {
       if (
@@ -1042,12 +1057,14 @@ export default function Squad() {
                                   </>
                                 ) : null}
                               </span>
-                              <button
-                                onClick={() => removeFromSquad(p.fplId)}
-                                className="btn px-2 py-1 text-xs shrink-0"
-                              >
-                                ✕
-                              </button>
+                              <div className="ml-auto flex items-center gap-2">
+                                <button
+                                  onClick={() => removeFromSquad(p.fplId)}
+                                  className="btn px-2 py-1 text-xs shrink-0"
+                                >
+                                  ✕
+                                </button>
+                              </div>
                             </div>
                           </td>
                           <td
@@ -1186,15 +1203,16 @@ export default function Squad() {
         className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-3 md:gap-4"
         style={{ height: "auto", alignItems: "stretch" }}
       >
-        <div
-          style={{ height: "100%" }}
-          className="flex flex-col min-h-0 order-1"
-        >
+        <div className="flex flex-col min-h-0 order-1">
           <Card
             title="Search players"
             titleClassName="title-gradient title-xl"
-            className="flex-1 flex flex-col h-full min-h-0 overflow-hidden"
-            style={{ height: "100%", minHeight: "0" }}
+            className="flex-1 flex flex-col min-h-0 overflow-hidden"
+            style={{
+              maxHeight: matrixHeight ? matrixHeight : undefined,
+              display: "flex",
+              flexDirection: "column",
+            }}
             bodyClassName="flex flex-col h-full min-h-0"
           >
             <div className="grid grid-cols-1 gap-2 text-xs">
@@ -1243,7 +1261,7 @@ export default function Squad() {
                   minHeight: 0,
                   overflowY: "auto",
                   marginTop: "0.75rem",
-                  height: "100%",
+                  maxHeight: matrixHeight ? matrixHeight - 110 : undefined,
                 }}
               >
                 <ul className="space-y-2">
@@ -1291,8 +1309,10 @@ export default function Squad() {
                             (e.currentTarget.style.background =
                               "linear-gradient(90deg, #7c5cff 0%, #00d5c4 100%)")
                           }
+                          aria-label="Add player"
+                          title="Add player"
                         >
-                          Add
+                          +
                         </button>
                       </li>
                     ))}
@@ -1306,7 +1326,7 @@ export default function Squad() {
             </div>
           </Card>
         </div>
-        <div className="flex flex-col h-full min-w-0 order-2">
+        <div className="flex flex-col h-full min-w-0 order-2" ref={matrixRef}>
           <Card
             title={`My Squad (${activeSquad.players.length}/15)`}
             titleClassName="title-gradient title-xl"
@@ -1576,77 +1596,80 @@ export default function Squad() {
                                   >
                                     {playerNames}
                                   </span>
-                                  {obj.transfers.length > 0 && (
+                                  <div className="ml-auto flex items-center gap-2">
+                                    {obj.transfers.length > 0 && (
+                                      <button
+                                        className="btn btn-ghost p-1 shrink-0"
+                                        title="Undo last transfer"
+                                        aria-label="Undo last transfer"
+                                        onClick={() =>
+                                          cancelLastTransferFor(obj.idx)
+                                        }
+                                      >
+                                        <svg
+                                          width="14"
+                                          height="14"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M9 14l-4-4 4-4"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                          />
+                                          <path
+                                            d="M5 10h8a6 6 0 010 12h-3"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                          />
+                                        </svg>
+                                      </button>
+                                    )}
                                     <button
-                                      className="btn btn-ghost p-1 shrink-0"
-                                      title="Undo last transfer"
-                                      aria-label="Undo last transfer"
                                       onClick={() =>
-                                        cancelLastTransferFor(obj.idx)
+                                        removeFromSquad(obj.initial.fplId)
                                       }
+                                      className="btn px-2 py-1 text-xs shrink-0"
+                                    >
+                                      ✕
+                                    </button>
+                                    <button
+                                      className="btn btn-primary px-2 py-1 text-xs shrink-0 text-white shadow-lg transition-all duration-200"
+                                      style={{
+                                        background:
+                                          "linear-gradient(90deg, #7c5cff 0%, #00d5c4 100%)",
+                                        border:
+                                          "1px solid rgba(124,92,255,0.35)",
+                                      }}
+                                      onMouseOver={(e) =>
+                                        (e.currentTarget.style.background =
+                                          "linear-gradient(90deg, #00d5c4 0%, #7c5cff 100%)")
+                                      }
+                                      onMouseOut={(e) =>
+                                        (e.currentTarget.style.background =
+                                          "linear-gradient(90deg, #7c5cff 0%, #00d5c4 100%)")
+                                      }
+                                      onClick={() => startTransfer(obj.idx)}
+                                      title="Plan transfer"
+                                      aria-label="Plan transfer"
                                     >
                                       <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 512 512"
                                         width="14"
                                         height="14"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="white"
+                                        aria-hidden="true"
                                       >
-                                        <path
-                                          d="M9 14l-4-4 4-4"
-                                          stroke="currentColor"
-                                          strokeWidth="2"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
-                                        <path
-                                          d="M5 10h8a6 6 0 010 12h-3"
-                                          stroke="currentColor"
-                                          strokeWidth="2"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
+                                        <path d="M256 32c-66.3 0-127.1 26.9-171 70.3l-29.4-29.4C48.4 66.7 32 73.6 32 88v112c0 8.8 7.2 16 16 16h112c14.4 0 21.3-16.4 11.3-26.6L138 160.1C168.2 129.1 210.1 112 256 112c79.5 0 144 64.5 144 144 0 14.7 11.9 26.6 26.6 26.6S453.3 270.7 453.3 256C453.3 136.5 371.5 32 256 32zM464 296H352c-14.4 0-21.3 16.4-11.3 26.6l33.3 33.3C343.8 382.9 301.9 400 256 400c-79.5 0-144-64.5-144-144 0-14.7-11.9-26.6-26.6-26.6S58.7 241.3 58.7 256C58.7 375.5 140.5 480 256 480c66.3 0 127.1-26.9 171-70.3l29.4 29.4c7.2 7.2 23.6.3 23.6-14.1V312c0-8.8-7.2-16-16-16z" />
                                       </svg>
                                     </button>
-                                  )}
-                                  <button
-                                    onClick={() =>
-                                      removeFromSquad(obj.initial.fplId)
-                                    }
-                                    className="btn px-2 py-1 text-xs shrink-0"
-                                  >
-                                    ✕
-                                  </button>
-                                  <button
-                                    className="btn btn-primary px-2 py-1 text-xs shrink-0 text-white shadow-lg transition-all duration-200"
-                                    style={{
-                                      background:
-                                        "linear-gradient(90deg, #7c5cff 0%, #00d5c4 100%)",
-                                      border: "1px solid rgba(124,92,255,0.35)",
-                                    }}
-                                    onMouseOver={(e) =>
-                                      (e.currentTarget.style.background =
-                                        "linear-gradient(90deg, #00d5c4 0%, #7c5cff 100%)")
-                                    }
-                                    onMouseOut={(e) =>
-                                      (e.currentTarget.style.background =
-                                        "linear-gradient(90deg, #7c5cff 0%, #00d5c4 100%)")
-                                    }
-                                    onClick={() => startTransfer(obj.idx)}
-                                    title="Plan transfer"
-                                    aria-label="Plan transfer"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 512 512"
-                                      width="14"
-                                      height="14"
-                                      fill="white"
-                                      aria-hidden="true"
-                                    >
-                                      <path d="M256 32c-66.3 0-127.1 26.9-171 70.3l-29.4-29.4C48.4 66.7 32 73.6 32 88v112c0 8.8 7.2 16 16 16h112c14.4 0 21.3-16.4 11.3-26.6L138 160.1C168.2 129.1 210.1 112 256 112c79.5 0 144 64.5 144 144 0 14.7 11.9 26.6 26.6 26.6S453.3 270.7 453.3 256C453.3 136.5 371.5 32 256 32zM464 296H352c-14.4 0-21.3 16.4-11.3 26.6l33.3 33.3C343.8 382.9 301.9 400 256 400c-79.5 0-144-64.5-144-144 0-14.7-11.9-26.6-26.6-26.6S58.7 241.3 58.7 256C58.7 375.5 140.5 480 256 480c66.3 0 127.1-26.9 171-70.3l29.4 29.4c7.2 7.2 23.6.3 23.6-14.1V312c0-8.8-7.2-16-16-16z" />
-                                    </svg>
-                                  </button>
+                                  </div>
                                 </div>
                               </td>
                               <td
