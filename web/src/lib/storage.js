@@ -31,8 +31,8 @@ export function setJSON(key, value) {
 const FIXTURES_SETTINGS_KEY = "fantasylab_fixtures_settings_v1";
 export function loadFixturesSettings() {
   return getJSON(FIXTURES_SETTINGS_KEY, {
-    fromGw: 1,
-    count: 8,
+    fromGw: 4,
+    count: 6,
     onlyFuture: true,
     sortBy: "alpha",
     sortDir: "asc",
@@ -68,6 +68,43 @@ export function loadSquads() {
 }
 export function saveSquads(squads) {
   localStorage.setItem("squads", JSON.stringify(squads));
+}
+// Per-user squad storage (scoped by authenticated user id)
+function userKey(userId, base) {
+  return `fantasylab_${base}_${userId}`;
+}
+export function loadUserSquads(userId) {
+  if (!userId) return [];
+  try {
+    return JSON.parse(localStorage.getItem(userKey(userId, "squads")) || "[]");
+  } catch {
+    return [];
+  }
+}
+export function saveUserSquads(userId, squads) {
+  if (!userId) return;
+  localStorage.setItem(userKey(userId, "squads"), JSON.stringify(squads || []));
+}
+export function loadUserActiveSquadId(userId) {
+  if (!userId) return null;
+  return localStorage.getItem(userKey(userId, "activeSquadId")) || null;
+}
+export function saveUserActiveSquadId(userId, id) {
+  if (!userId) return;
+  localStorage.setItem(userKey(userId, "activeSquadId"), id);
+}
+export function migrateGlobalSquadsToUser(userId) {
+  if (!userId) return;
+  const global = loadSquads();
+  if (global && global.length && !loadUserSquads(userId).length) {
+    saveUserSquads(userId, global);
+    const act = loadActiveSquadId();
+    if (act) saveUserActiveSquadId(userId, act);
+    try {
+      localStorage.removeItem("squads");
+      localStorage.removeItem("activeSquadId");
+    } catch {}
+  }
 }
 export function deleteSquad(id) {
   const list = loadSquads();
