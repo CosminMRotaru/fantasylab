@@ -570,3 +570,49 @@ input[type="number"] {
   display: block;
   pointer-events: none;
 }
+
+/* Squad GW cell simplified scaling: keep small constant size up to 860px to avoid overlap */
+.gw-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gw-transfer-icon {
+  left: 4px !important;
+}
+.gw-select-dot-wrapper {
+  right: 4px !important;
+}
+
+/* Base desktop (>= 860px) */
+.gw-cell {
+  font-size: 13px;
+}
+.gw-transfer-icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+.gw-select-dot {
+  width: 8px;
+  height: 8px;
+  border-width: 2px;
+  display: inline-block;
+}
+
+/* Flatten everything below 860px */
+@media (max-width: 859px) {
+  .gw-cell {
+    font-size: 9.5px;
+  }
+  .gw-transfer-icon svg {
+    width: 11px;
+    height: 11px;
+  }
+  .gw-select-dot {
+    width: 5.5px;
+    height: 5.5px;
+    border-width: 1.5px;
+  }
+}
