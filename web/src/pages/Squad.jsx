@@ -1103,7 +1103,7 @@ export default function Squad() {
                                 style={{ width: gwColWidth, minWidth: 64 }}
                               >
                                 <div
-                                  className={`rounded-md px-2 py-1 font-semibold relative transition cursor-pointer
+                                  className={`gw-cell rounded-md px-2 py-1 font-semibold relative transition cursor-pointer
                                     ${
                                       isSelected
                                         ? "ring-2 ring-brand-600 bg-[#7c5cff22] shadow-[0_0_0_2px_#00d5c4] scale-[1.04]"
@@ -1124,20 +1124,66 @@ export default function Squad() {
                                   {c.text}
                                   {hasTransferAtGw && (
                                     <span
-                                      className="absolute left-1 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#7c5cff] text-white text-[8px] leading-none flex items-center justify-center pointer-events-none shadow-sm"
-                                      style={{ lineHeight: 1 }}
+                                      className="gw-transfer-icon absolute left-1 top-1/2 -translate-y-1/2 pointer-events-none"
                                       title={`Transfer GW ${gw}`}
                                       aria-hidden="true"
                                     >
-                                      ⇄
+                                      <svg
+                                        viewBox="0 0 24 24"
+                                        width="16"
+                                        height="16"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        style={{
+                                          filter:
+                                            "drop-shadow(0 0 2px rgba(124,92,255,0.55)) drop-shadow(0 0 4px rgba(124,92,255,0.35))",
+                                        }}
+                                      >
+                                        <defs>
+                                          <linearGradient
+                                            id="transferStroke"
+                                            x1="0"
+                                            y1="0"
+                                            x2="24"
+                                            y2="24"
+                                            gradientUnits="userSpaceOnUse"
+                                          >
+                                            <stop
+                                              offset="0%"
+                                              stopColor="#9a7dff"
+                                            />
+                                            <stop
+                                              offset="100%"
+                                              stopColor="#6b35ff"
+                                            />
+                                          </linearGradient>
+                                        </defs>
+                                        <path
+                                          d="M7 9l-3 3m0 0l3 3m-3-3h16m-3 3l3-3m0 0l-3-3"
+                                          stroke="url(#transferStroke)"
+                                          strokeWidth="2.2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                        {/* Dark contrast outline for light backgrounds */}
+                                        <path
+                                          d="M7 9l-3 3m0 0l3 3m-3-3h16m-3 3l3-3m0 0l-3-3"
+                                          stroke="#12062e"
+                                          strokeOpacity="0.75"
+                                          strokeWidth="3.1"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          style={{ mixBlendMode: "normal" }}
+                                        />
+                                      </svg>
                                     </span>
                                   )}
                                   <span
-                                    className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"
+                                    className="gw-select-dot-wrapper absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"
                                     aria-hidden="true"
                                   >
                                     <span
-                                      className="inline-block rounded-full border transition-all"
+                                      className="gw-select-dot inline-block rounded-full border transition-all"
                                       style={{
                                         width: 8,
                                         height: 8,
@@ -1706,7 +1752,7 @@ export default function Squad() {
                                     style={{ width: gwColWidth, minWidth: 64 }}
                                   >
                                     <div
-                                      className={`rounded-md px-2 py-1 font-semibold relative transition cursor-pointer
+                                      className={`gw-cell rounded-md px-2 py-1 font-semibold relative transition cursor-pointer
                                         ${
                                           isSelected
                                             ? "ring-2 ring-brand-600 bg-[#7c5cff22] shadow-[0_0_0_2px_#00d5c4] scale-[1.04]"
@@ -1726,11 +1772,11 @@ export default function Squad() {
                                     >
                                       {c.text}
                                       <span
-                                        className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"
+                                        className="gw-select-dot-wrapper absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"
                                         aria-hidden="true"
                                       >
                                         <span
-                                          className="inline-block rounded-full border transition-all"
+                                          className="gw-select-dot inline-block rounded-full border transition-all"
                                           style={{
                                             width: 8,
                                             height: 8,
