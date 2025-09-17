@@ -6,7 +6,7 @@ Describe your team, select players, and let the app handle transfers, prediction
 
 ## Demo
 
-[Live Demo](https://fantasylab.netlify.app/)
+[Live Demo]([https://fantasylab.netlify.app/](https://fantasylabrmc.netlify.app/))
 
 ## Screenshots
 
@@ -105,4 +105,5 @@ Cosmin Marius Rotaru
 ## License
 
 MIT
+
 
