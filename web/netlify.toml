@@ -18,4 +18,5 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
   # Updated connect-src with actual Railway API host
-  Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://enthusiastic-quietude-production-b41f.up.railway.app; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+  Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://fantasylab-production.up.railway.app/; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+
