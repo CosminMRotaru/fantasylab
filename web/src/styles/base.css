@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --text: #eaeaea;
+  --muted: #a9afb9;
+  --accent: #7c5cff;
+  --fpl-purple: #37003c;
+  --fpl-purple-ov-1: rgba(55, 0, 60, 0.18);
+  --fpl-purple-ov-2: rgba(55, 0, 60, 0.1);
+  --fpl-purple-border: rgba(124, 92, 255, 0.2);
+
+  --shadow-primary: 0 0 18px rgba(124, 92, 255, 0.35);
+  --border-accent: 1px solid rgba(124, 92, 255, 0.35);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.25);
+  --padding-btn: 0.5rem 0.75rem;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  @apply font-sans text-[15px];
+  color: var(--text);
+  background: #0b0e12;
+  position: relative;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%);
+  background-blend-mode: normal;
+}

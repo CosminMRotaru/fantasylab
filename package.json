@@ -1,0 +1,7 @@
+{
+  "name": "fantasylab-root",
+  "private": true,
+  "scripts": {
+    "start": "cd server && node src/index.js"
+  }
+}
