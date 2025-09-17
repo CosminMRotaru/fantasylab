@@ -248,7 +248,7 @@ export default function Navbar() {
             </div>
           )}
           <a
-            href="https://github.com/your-org/fantasylab"
+            href="https://github.com/CosminMRotaru/Fantasy-Lab"
             target="_blank"
             rel="noreferrer"
             className="hidden sm:inline-flex no-underline px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg relative rounded-xl transition duration-150 text-white/85 hover:text-white hover:bg-[#37003c] hover:scale-[1.05] sm:hover:scale-[1.06] md:hover:scale-[1.08] hover:shadow-[0_0_18px_#7c5cff55] group"
@@ -307,3 +307,4 @@ function GlobalSearchWrapper({ children }) {
     </div>
   );
 }
+
