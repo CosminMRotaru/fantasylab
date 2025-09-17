@@ -10,9 +10,9 @@ Describe your team, select players, and let the app handle transfers, prediction
 
 ## Screenshots
 
-![Dashboard](public/images/dashboard.png)  
-![Fixtures](public/images/fixtures.png)  
-![Squad Management](public/images/squad.png)
+![Dashboard](web/public/images/dashboard.png)  
+![Fixtures](web/public/images/fixtures.png)  
+![Squad Management](web/public/images/squad.png)
 
 ## Features
 
@@ -105,3 +105,4 @@ Cosmin Marius Rotaru
 ## License
 
 MIT
+
